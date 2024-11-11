@@ -67,6 +67,7 @@ const onSubmit = handleSubmit(async (values) => {
             :error="!!error"
             label="Register"
             type="submit"
+            class="gradient-button gradient-button--raised gradient-button--animated"
           >
             Register
           </ButtonComponent>

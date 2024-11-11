@@ -1,0 +1,8 @@
+{
+  "instance": "/api/test",
+  "status": 500,
+  "type": "about:blank",
+  "title": "Internal Server Error",
+  "detail": "An error occurred",
+  "timestamp": "2011-10-05T14:48:00.000Z"
+}

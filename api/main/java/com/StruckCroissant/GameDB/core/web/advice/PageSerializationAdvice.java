@@ -12,17 +12,15 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.lang.reflect.ParameterizedType;
-
 @ControllerAdvice
-public class SerializationAdvice implements ResponseBodyAdvice<Page<?>> {
+public class PageSerializationAdvice implements ResponseBodyAdvice<Page<?>> {
   @Override
   public boolean supports(
       @NotNull MethodParameter returnType,
       @NotNull Class<? extends HttpMessageConverter<?>> converterType
   ) {
     return converterType.isAssignableFrom(MappingJackson2HttpMessageConverter.class)
-        && ((ParameterizedType) returnType.getGenericParameterType()).getRawType() == Page.class;
+        && Page.class.isAssignableFrom(returnType.getParameterType());
   }
 
   public Page<?> beforeBodyWrite(

@@ -10,11 +10,11 @@ export function useLogin(
   doLogin: () => Promise<User | null>;
 } {
   const authStore = useAuthenticationStore();
-  const login = usePost<User>("/login");
+  const login = usePost<User>("/login", loginRequest);
 
   const doLogin = async () => {
     const loginRequestData = toValue(loginRequest);
-    const loginData = await login.postData(loginRequestData);
+    const loginData = await login.postData();
     authStore.addBasicAuth(
       loginRequestData.username,
       loginRequestData.password
@@ -33,19 +33,11 @@ export function useRegister(
 ): NetworkComposable & {
   doRegister: () => Promise<boolean | null>;
 } {
-  const register = usePost<boolean>("/register");
-
-  const doRegister = async () => {
-    const registerRequestData = toValue(registerRequest);
-    return await register.postData({
-      username: registerRequestData.username,
-      password: registerRequestData.password,
-    });
-  };
+  const register = usePost<boolean>("/register", registerRequest);
 
   return {
     ...register,
-    doRegister,
+    doRegister: register.postData,
   };
 }
 

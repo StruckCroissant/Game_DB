@@ -34,7 +34,7 @@ export function createProblemErrorFromProblem(problem: Problem): ProblemError {
 }
 
 export function createProblemErrorFromAxiosError(
-  error: AxiosError
+  error: AxiosError | null
 ): ProblemError | null {
   const response = error?.response;
 
@@ -48,7 +48,7 @@ export function createProblemErrorFromAxiosError(
 }
 
 export const isAxiosError = (error: unknown): error is AxiosError =>
-  (error as AxiosError).isAxiosError;
+  (error as AxiosError)?.isAxiosError ?? false;
 
 export const isProblemError = (error: unknown): error is ProblemError =>
   (error as ProblemError)?.isProblemError ?? false;

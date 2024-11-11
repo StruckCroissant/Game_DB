@@ -64,6 +64,7 @@ const onSubmit = handleSubmit(async (values) => {
           :error="!!error"
           label="Log in"
           type="submit"
+          class="gradient-button gradient-button--raised gradient-button--animated"
           @click="onSubmit"
         >
           Log in

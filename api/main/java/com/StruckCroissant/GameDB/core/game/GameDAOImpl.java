@@ -25,6 +25,16 @@ import org.springframework.stereotype.Service;
 public class GameDAOImpl implements GameDao {
   private final NamedParameterJdbcTemplate jdbcTemplate;
 
+  /**
+   * Constructor that initializes Object with a jdbcTemplate via Autowire
+   *
+   * @param jdbcTemplate SQL execution object
+   */
+  @Autowired
+  public GameDAOImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
+  }
+
   private static SimpleQueryBuilder setGameFormat(SimpleQueryBuilder builder) {
     return builder
         .addSelect("game.gid")
@@ -43,16 +53,6 @@ public class GameDAOImpl implements GameDao {
         .addFrom("LEFT JOIN genre ON genre.genre_id = game_genre.genre_id")
         .addFrom("LEFT JOIN franchise franchise ON game.gid = franchise.gid")
         .addGroupBy("game.gid");
-  }
-
-  /**
-   * Constructor that initializes Object with a jdbcTemplate via Autowire
-   *
-   * @param jdbcTemplate SQL execution object
-   */
-  @Autowired
-  public GameDAOImpl(NamedParameterJdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
   }
 
   /**
@@ -81,11 +81,13 @@ public class GameDAOImpl implements GameDao {
         .addWhere("game.gid = :id")
         .setLimit(1)
         .build();
+
     final List<Game> result = this.jdbcTemplate.query(
         sql,
         new MapSqlParameterSource().addValue("id", id),
         new SQLGameAccessor()
     );
+
     return Optional.ofNullable(!result.isEmpty() ? result.get(0) : null);
   }
 

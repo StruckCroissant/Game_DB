@@ -18,14 +18,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class RegistrationServiceTest {
 
   @Mock private UserService userService;
+  @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
   private AutoCloseable autoCloseable;
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
   private RegistrationService underTest;
 
   @Before
   public void setUp() {
     autoCloseable = MockitoAnnotations.openMocks(this);
-    bCryptPasswordEncoder = new BCryptPasswordEncoder();
     underTest = new RegistrationService(bCryptPasswordEncoder, userService);
   }
 
@@ -35,21 +34,25 @@ public class RegistrationServiceTest {
   }
 
   private User getTestUser() {
-    return new User(1, "testUsername", "testPassword", UserRoleEnum.USER, false, true);
+    return new User(
+        1,
+        "testUsername",
+        "testPassword",
+        UserRoleEnum.USER,
+        false,
+        true
+    );
   }
 
   @Test
   public void canRegisterUser() {
-    // given
     User testUser = getTestUser();
     UserRegistrationRequest request =
         new UserRegistrationRequest(testUser.getUsername(), testUser.getPassword());
     when(userService.signUpUser(testUser)).thenReturn(true);
 
-    // when
     underTest.registerUser(request);
 
-    // then
     ArgumentCaptor<User> userRegisterCaptor = ArgumentCaptor.forClass(User.class);
 
     verify(userService).signUpUser(userRegisterCaptor.capture());

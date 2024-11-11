@@ -144,4 +144,26 @@ public class GameControllerTest {
                 .accept(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(status().isOk());
   }
+
+  @Test
+  public void whenMakeRequest_thenReturnsExpectedStructure() throws Exception {
+    final int id = 1;
+    final String URL_WITH_PARAMS = String.format("%s?id=%s", BASE_URL, id);
+
+    when(gameService.searchGames(
+        PageRequest.of(0, 20),
+        null,
+        id
+    )).thenReturn(new PageImpl<>(new ArrayList<>()));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(URL_WITH_PARAMS)
+                .accept(MediaType.APPLICATION_PROBLEM_JSON))
+        .andExpect(jsonPath("$.content").isArray())
+        .andExpect(jsonPath("$.pagination.page").value(0))
+        .andExpect(jsonPath("$.pagination.totalPages").value(1))
+        .andExpect(jsonPath("$.pagination.totalElements").value(0))
+        .andExpect(jsonPath("$.pagination.pageSize").value(0));
+  }
 }
