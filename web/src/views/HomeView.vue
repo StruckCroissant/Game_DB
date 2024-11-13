@@ -15,7 +15,9 @@ import SidebarComponent from "@/components/UI/SidebarComponent.vue";
   display: flex;
 
   &__content {
-    padding: 1rem;
+    padding: 3rem 5rem;
+    width: 100vw;
+    height: 100vh;
   }
 }
 </style>

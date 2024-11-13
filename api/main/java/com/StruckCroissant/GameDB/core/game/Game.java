@@ -1,6 +1,6 @@
 package com.StruckCroissant.GameDB.core.game;
 
-import com.StruckCroissant.GameDB.core.DbModelObj;
+import com.StruckCroissant.GameDB.core.DBAL.contract.DbModelObj;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 

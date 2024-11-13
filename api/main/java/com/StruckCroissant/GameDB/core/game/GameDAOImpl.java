@@ -1,9 +1,16 @@
 package com.StruckCroissant.GameDB.core.game;
 
+import com.StruckCroissant.GameDB.core.DBAL.SimpleQueryBuilder;
+
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Repository("db-game")
 public class GameDAOImpl implements GameDao {
-  private final JdbcTemplate jdbcTemplate;
+  private final NamedParameterJdbcTemplate jdbcTemplate;
 
   /**
    * Constructor that initializes Object with a jdbcTemplate via Autowire
@@ -24,8 +31,28 @@ public class GameDAOImpl implements GameDao {
    * @param jdbcTemplate SQL execution object
    */
   @Autowired
-  public GameDAOImpl(JdbcTemplate jdbcTemplate) {
+  public GameDAOImpl(NamedParameterJdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
+  }
+
+  private static SimpleQueryBuilder setGameFormat(SimpleQueryBuilder builder) {
+    return builder
+        .addSelect("game.gid")
+        .addSelect("game.gname")
+        .addSelect("game.cost")
+        .addSelect("game.discounted_cost")
+        .addSelect("game.url")
+        .addSelect("game.age_rating")
+        .addSelect("game.indie")
+        .addSelect("game.description")
+        .addSelect("GROUP_CONCAT(genre.genre_name) as genres")
+        .addSelect("franchise.fname as franchise")
+        .addSelect("game.rdate")
+        .addSelect("game.rawgId")
+        .addFrom("game LEFT JOIN gamegenre game_genre ON game.gid = game_genre.gid")
+        .addFrom("LEFT JOIN genre ON genre.genre_id = game_genre.genre_id")
+        .addFrom("LEFT JOIN franchise franchise ON game.gid = franchise.gid")
+        .addGroupBy("game.gid");
   }
 
   /**
@@ -35,33 +62,11 @@ public class GameDAOImpl implements GameDao {
    */
   @Override
   public List<Game> selectAllGames() {
-    final String sql =
-        """
-        SELECT
-            g.gid,
-            g.gname,
-            g.cost,
-            g.discounted_cost,
-            g.url,
-            g.age_rating,
-            g.indie,
-            g.description,
-            GROUP_CONCAT(gn.genre_name) as genres,
-            f.fname as franchise,
-            g.rdate,
-            g.rawgId
-        FROM
-            game g LEFT JOIN gamegenre ggn ON
-                g.gid = ggn.gid
-            LEFT JOIN genre gn ON
-                gn.genre_id = ggn.genre_id
-            LEFT JOIN franchise f ON
-                g.gid = f.gid
-        GROUP BY g.gid
-        ;
-        """;
-    return jdbcTemplate.query(
-        sql, (resultSet, i) -> SQLGameAccessor.getGameFromResultSet(resultSet));
+    final String sql = setGameFormat(new SimpleQueryBuilder()).build();
+    return this.jdbcTemplate.query(
+        sql,
+        new SQLGameAccessor()
+    );
   }
 
   /**
@@ -72,81 +77,66 @@ public class GameDAOImpl implements GameDao {
    */
   @Override
   public Optional<Game> selectGameById(int id) {
-    final String sql =
-        """
-        SELECT
-            g.gid,
-            g.gname,
-            g.cost,
-            g.discounted_cost,
-            g.url,
-            g.age_rating,
-            g.indie,
-            g.description,
-            GROUP_CONCAT(gn.genre_name) as genres,
-            f.fname as franchise,
-            g.rdate,
-            g.rawgId
-        FROM
-            game g LEFT JOIN gamegenre ggn ON
-                g.gid = ggn.gid
-            LEFT JOIN genre gn ON
-                gn.genre_id = ggn.genre_id
-            LEFT JOIN franchise f ON
-                g.gid = f.gid
-        WHERE g.gid = ?
-        GROUP BY
-            g.gid
-        LIMIT 1
-        ;
-        """;
-    return Optional.ofNullable(
-        jdbcTemplate.query(
-            sql,
-            (resultSet) -> {
-              if (resultSet.next()) {
-                return SQLGameAccessor.getGameFromResultSet(resultSet);
-              } else {
-                return null;
-              }
-            },
-            id));
+    final String sql = setGameFormat(new SimpleQueryBuilder())
+        .addWhere("game.gid = :id")
+        .setLimit(1)
+        .build();
+
+    final List<Game> result = this.jdbcTemplate.query(
+        sql,
+        new MapSqlParameterSource().addValue("id", id),
+        new SQLGameAccessor()
+    );
+
+    return Optional.ofNullable(!result.isEmpty() ? result.get(0) : null);
   }
 
   @Override
   public List<Game> selectRelatedGames(int id) {
     final String SQL =
-        """
-         SELECT
-             g.gid,
-             g.gname,
-             g.cost,
-             g.discounted_cost,
-             g.url,
-             g.age_rating,
-             g.indie,
-             g.description,
-             g.rdate,
-             g.rawgId,
-             group_concat(gen.genre_name) AS genres,
-             f.fname as franchise
-         FROM
-             gamegenre gm1 INNER JOIN
-               gamegenre gm2 ON
-                 gm1.genre_id = gm2.genre_id AND gm1.gid <> gm2.gid
-             INNER JOIN
-               game g ON gm2.gid = g.gid
-             INNER JOIN
-               genre gen on gm2.genre_id = gen.genre_id
-             LEFT JOIN franchise f ON
-               g.gid = f.gid
-         WHERE
-             gm1.gid = ?
-         group by gm2.gid
-         order by COUNT(gm2.genre_id) DESC
-         LIMIT 10;
-        """;
+        setGameFormat(new SimpleQueryBuilder())
+            .addFrom(
+                "INNER JOIN gamegenre game_genre2 ON game_genre.genre_id = game_genre2.genre_id AND"
+                    + " game_genre.gid <> game_genre2.gid")
+            .addWhere("game_genre2.gid = :genreGid")
+            .addOrderBy("COUNT(game_genre2.genre_id) DESC")
+            .setLimit(10)
+            .build();
     return jdbcTemplate.query(
-        SQL, (resultSet, i) -> SQLGameAccessor.getGameFromResultSet(resultSet), id);
+        SQL,
+        new MapSqlParameterSource()
+            .addValue("genreGid", id),
+        new SQLGameAccessor()
+    );
+  }
+
+  private static SimpleQueryBuilder getSearchGamesBuilder(@Nullable String name, @Nullable Integer id) {
+    return (new SimpleQueryBuilder())
+        .addFrom("game")
+        .addWhere("game.gname LIKE CONCAT(:gname, '%')")
+        .addWhere("OR game.gid = :gid")
+        .setParameter("gname", name)
+        .setParameter("gid", id);
+  }
+
+  public Page<Game> searchGamesPaginated(Pageable pageable, @Nullable String name, @Nullable Integer id) {
+    final SimpleQueryBuilder countBuilder = getSearchGamesBuilder(name, id)
+        .addSelect("count(*) as count");
+    final SimpleQueryBuilder gameBuilder = setGameFormat(getSearchGamesBuilder(name, id))
+        .setLimit(pageable.getPageSize())
+        .setOffset(pageable.getOffset());
+
+    final long total = (long) jdbcTemplate.queryForList(
+        countBuilder.build(),
+        countBuilder.getParameters()
+    ).get(0).get("count");
+
+    final List<Game> games = jdbcTemplate.query(
+        gameBuilder.build(),
+        gameBuilder.getParameters(),
+        new SQLGameAccessor()
+    );
+
+    return new PageImpl<>(games, pageable, total);
   }
 }

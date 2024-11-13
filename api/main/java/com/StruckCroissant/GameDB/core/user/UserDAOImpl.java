@@ -135,7 +135,7 @@ public class UserDAOImpl implements UserDao {
         WHERE u.uid = ?;
         """;
     return jdbcTemplate.query(
-        sql, (resultSet, i) -> SQLGameAccessor.getGameFromResultSet(resultSet), uid);
+        sql, new SQLGameAccessor(), uid);
   }
 
   @Override

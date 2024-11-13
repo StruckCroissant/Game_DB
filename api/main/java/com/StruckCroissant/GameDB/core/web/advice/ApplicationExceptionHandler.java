@@ -1,4 +1,4 @@
-package com.StruckCroissant.GameDB.exception;
+package com.StruckCroissant.GameDB.core.web.advice;
 
 import javax.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;

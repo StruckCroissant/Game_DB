@@ -1,0 +1,13 @@
+app:
+  datasource:
+    port: 3316
+    username: root
+    name: gamedb
+    password:
+    driver-class-name: org.mariadb.jdbc.Driver
+spring:
+  flyway.enabled: false
+  profiles.active:
+    - test
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

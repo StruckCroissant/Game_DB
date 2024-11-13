@@ -4,10 +4,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.StruckCroissant.GameDB.TestDbConfig;
 import com.StruckCroissant.GameDB.core.game.GameController;
 import com.StruckCroissant.GameDB.core.game.GameService;
 import com.StruckCroissant.GameDB.core.user.UserDAOImpl;
+import com.StruckCroissant.GameDB.core.web.advice.ApplicationExceptionHandler;
+import config.TestDbConfig;
 import java.lang.reflect.Field;
 import java.util.*;
 import org.junit.Before;
@@ -26,7 +27,7 @@ import org.springframework.web.accept.FixedContentNegotiationStrategy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource(locations = "classpath:test.properties")
+@TestPropertySource(locations = "classpath:application.yml")
 @ContextConfiguration(classes = {TestDbConfig.class, UserDAOImpl.class})
 @SpringBootTest
 public class ApplicationExceptionHandlerTest {

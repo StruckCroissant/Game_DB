@@ -1,0 +1,21 @@
+[
+  {
+    "gid": 10,
+    "gname": "Rust",
+    "cost": "$39.99",
+    "discountedCost": "",
+    "url": "https://store.steampowered.com/app/252490/?snr=1_5_9__205",
+    "description": "To survive is the main task in the game Rust. It is necessary to survive in the area, which is now wholly wild but was recently inhabited.\nAt the beginning of the game, there is only a rock and a torch. The rest will have to be found or stolen.\nBears and wolves roam the terrain, there are diseases and radiation in the game, but the main danger comes from other survivors. The game has only a multiplayer mode. We have to engage in skirmishes and hand-to-hand fighting with them.\nPlayers can not only compete, but also unite. Rare minutes of peace and security worth devoting to construction, equipment and strengthen the shelter, the base.\nSometimes some helicopters shoot everyone on the ground. Fortunately, helicopters can be brought down.\nWeapons can be found, collected and improved. Sophisticated and more effective weapons sometimes cannot be assembled independently, you need to use drawings and find rare details, sometimes leaving very far.\nSometimes planes drop from the sky \"parcels\" with various useful staff. The falling parcel is visible from afar, the path to its fall can be long. The package can be noticed by others. A long road can be facilitated by a vehicle. For example, a boat.",
+    "genres": [
+      "Action",
+      "Adventure",
+      "Massively Multiplayer",
+      "RPG",
+      "Indie"
+    ],
+    "franchise": null,
+    "releaseDate": "2018-02-09",
+    "rawgId": 9671.0,
+    "age_rating": "Mature"
+  }
+]

@@ -1,3 +1,4 @@
+logging.level.root: info
 app:
   datasource:
     jdbc-url: "jdbc:mariadb://localhost:3316/gamedb_db"
@@ -19,6 +20,8 @@ spring: # TODO Combine spring & app settings
     password: mariadb
     url: "jdbc:mariadb://localhost:3316/gamedb_db"
     baseline-on-migrate: true
+  profiles.active:
+    - prod
   devtools.restart.enabled: true
   mvc.throw-exception-if-no-handler-found: true
   web.resources.add-mappings: false

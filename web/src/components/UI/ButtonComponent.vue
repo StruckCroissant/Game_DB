@@ -29,17 +29,17 @@ const { loadingFinished } = useLoadingDelay(loading);
 </script>
 
 <template>
-  <button
-    id="button"
-    :aria-label="label"
-    class="gradient-button gradient-button--raised"
-  >
-    <span v-if="loadingFinished && !error">
-      {{ loadingSuccessText }}
-      <FontAwesomeIcon :icon="loadingSuccessIcon" data-testid="success" />
-    </span>
+  <button id="button" :aria-label="label">
+    <slot v-if="loadingFinished && !error" name="loadSuccess">
+      <span>
+        {{ loadingSuccessText }}
+        <FontAwesomeIcon :icon="loadingSuccessIcon" data-testid="success" />
+      </span>
+    </slot>
     <slot v-else-if="!loading"></slot>
-    <span v-else class="loader loader--small" data-testid="spinner"></span>
+    <slot v-else name="loading">
+      <span class="loader loader--small" data-testid="spinner"></span>
+    </slot>
   </button>
 </template>
 

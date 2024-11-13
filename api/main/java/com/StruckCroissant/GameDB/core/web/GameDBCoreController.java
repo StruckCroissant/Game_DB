@@ -1,3 +1,3 @@
-package com.StruckCroissant.GameDB.core;
+package com.StruckCroissant.GameDB.core.web;
 
 public abstract class GameDBCoreController {}

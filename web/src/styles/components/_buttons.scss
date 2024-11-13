@@ -1,7 +1,7 @@
 @import "@/styles/abstracts/placeholders";
 @import "@/styles/abstracts/variables";
 
-@mixin button($border-depth: 4px, $border-color: $grey) {
+@mixin button($border-depth: 4px, $border-color: $grey, $border-radius: 15px) {
   $button: &;
 
   font-family: inherit;
@@ -12,7 +12,7 @@
   cursor: pointer;
   user-select: none;
   border: none;
-  border-radius: 15px;
+  border-radius: $border-radius;
   padding: 0.5rem 1rem;
   background-color: rgb(240 240 240);
 
@@ -62,5 +62,13 @@
 
   &--raised#{$button}:active {
     box-shadow: $grey--light 0 0 0 0;
+  }
+
+  &--animated {
+    @extend %animated;
+  }
+
+  &--sharper {
+    @include button(4px, $base--light, 8px);
   }
 }

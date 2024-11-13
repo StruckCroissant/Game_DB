@@ -1,4 +1,4 @@
-package com.StruckCroissant.GameDB.core;
+package com.StruckCroissant.GameDB.core.DBAL.contract;
 
 import com.StruckCroissant.GameDB.core.game.Game;
 import com.StruckCroissant.GameDB.core.user.User;

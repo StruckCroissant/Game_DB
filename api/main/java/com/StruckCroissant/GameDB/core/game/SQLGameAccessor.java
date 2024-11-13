@@ -1,12 +1,14 @@
 package com.StruckCroissant.GameDB.core.game;
 
+import org.springframework.jdbc.core.RowMapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SQLGameAccessor {
+public class SQLGameAccessor implements RowMapper<Game> {
   /**
    * Private method that extracts game object from resultSet
    *
@@ -14,7 +16,7 @@ public class SQLGameAccessor {
    * @return Game
    * @throws SQLException generic SQL exception
    */
-  public static Game getGameFromResultSet(ResultSet resultSet) throws SQLException {
+  public Game mapRow(ResultSet resultSet, int index) throws SQLException {
     int gid = resultSet.getInt("gid");
     String gname = resultSet.getString("gname");
     String cost = resultSet.getString("cost");

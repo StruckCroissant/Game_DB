@@ -11,6 +11,11 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--replace"
+          skip-commit: true
+      - name: Print diffs
+        run: git --no-pager diff --exit-code
   build:
     name: "Backend Build"
     runs-on: ubuntu-latest

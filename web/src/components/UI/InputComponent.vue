@@ -49,6 +49,7 @@ const { value, errorMessage } = useField(props.name, undefined, {
         :placeholder="label"
         :aria-label="name"
         v-model="value"
+        v-bind="$attrs"
         class="rounded-input__input"
       />
       <div
