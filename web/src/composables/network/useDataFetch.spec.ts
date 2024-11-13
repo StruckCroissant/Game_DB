@@ -81,7 +81,7 @@ describe("UseDataFetch error tests", () => {
     expect(fetchResult.getData()).rejects.toStrictEqual(mockError);
   });
 
-  it("usePost should rethrow unexpected error", async () => {
+  it("usePost should rethrow unexpected error", () => {
     const mockError = { test: "test" };
     vi.mocked(axiosInstance.post).mockResolvedValue(mockError);
 

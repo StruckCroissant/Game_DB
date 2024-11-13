@@ -1,14 +1,10 @@
 import { useAuthenticationStore } from "@/stores/authentication";
-import { NetworkComposable, usePost } from "@/composables/network/useFetch";
+import { usePost } from "@/composables/network/useDataFetch";
 import { toValue } from "vue";
 import type { User, UserLoginRequest } from "@/types/user";
 import type { MaybeRefOrGetter } from "vue";
 
-export function useLogin(
-  loginRequest: MaybeRefOrGetter<UserLoginRequest>
-): NetworkComposable & {
-  doLogin: () => Promise<User | null>;
-} {
+export function useLogin(loginRequest: MaybeRefOrGetter<UserLoginRequest>) {
   const authStore = useAuthenticationStore();
   const login = usePost<User>("/login", loginRequest);
 
@@ -30,9 +26,7 @@ export function useLogin(
 
 export function useRegister(
   registerRequest: MaybeRefOrGetter<UserLoginRequest>
-): NetworkComposable & {
-  doRegister: () => Promise<boolean | null>;
-} {
+) {
   const register = usePost<boolean>("/register", registerRequest);
 
   return {

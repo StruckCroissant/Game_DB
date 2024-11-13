@@ -1,9 +1,5 @@
 import { isDataResponse } from "@/types/request";
-import {
-  useRequest as wrappedUseRequest,
-  useFetch as wrappedUseFetch,
-  usePost as wrappedUsePost,
-} from "./useFetch";
+import { useRequest as wrappedUseRequest } from "./useFetch";
 import type { AxiosError, AxiosResponse } from "axios";
 import {
   createProblemErrorFromAxiosError,
@@ -26,8 +22,13 @@ const successTransformer = (response: AxiosResponse) => {
 };
 
 function useRequest<T = unknown, R = AxiosResponse<T>>(...args: unknown[]) {
+  const onError = (inputError: AxiosError) => {
+    const error = errorTransformer(inputError);
+    throw error;
+  };
+
   const { error: wrappedError, ...rest } = wrappedUseRequest<T, R>({
-    onError: errorTransformer,
+    onError,
     onSuccess: successTransformer,
     ...args,
   });
